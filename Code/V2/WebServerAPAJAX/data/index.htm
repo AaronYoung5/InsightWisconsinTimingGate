@@ -1,0 +1,21 @@
+<DOCTYPE! HTML>
+    <html>
+        <h1>Welcome to ESP8266.</h1>
+        <h2>Sensor data</h2>
+        <script>
+            function loadData(url, callback){
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function(){
+                    if(this.readyState == 4 && this.status == 200){
+                        callback.apply(xhttp);
+                    }
+                };
+                xhttp.open("GET", url, true);
+                xhttp.send();
+            }
+        function updateData(){
+            document.getElementById("data").innerHTML = this.responseText;
+        }
+        </script>
+    </html>
+    

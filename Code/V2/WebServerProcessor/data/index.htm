@@ -1,0 +1,25 @@
+<DOCTYPE! HTML>
+  <html>
+    <h1>Welcome to ESP8266.</h1>
+    <h2>Select your action.</h2>
+    <H4>Status: The led is <span id="status">%LEDSTATUS%</span></H4>
+    <button id="on-button" value="on">LED ON</button>
+    <button id="off-button" value="off">LED OFF</button>
+    <script>
+      var onButton = document.getElementById('on-button');
+      var offButton = document.getElementById('off-button');
+      var ledStatus = document.getElementById('status');
+      var xhr = new XMLHttpRequest();
+      var changeLED = function(){
+        xhr.open('GET', '/led=' + this.value, true);
+        xhr.onreadystatechange = function () {
+          if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+            ledStatus.innerHTML = xhr.responseText;
+          };
+        };
+        xhr.send();
+      };
+      onButton.addEventListener('click', changeLED);
+      offButton.addEventListener('click', changeLED);
+    </script>
+  </html>
