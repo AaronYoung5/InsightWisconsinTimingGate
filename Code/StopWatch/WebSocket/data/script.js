@@ -1,37 +1,7 @@
-// WebSocket Interface With NodeMCU 
-
-var timingGateEnabled = false;
-var connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
-connection.onopen = function () {
-    connection.send('Connect ' + new Date());
-};
-connection.onerror = function (error) {
-    console.log('WebSocket Error ', error);
-};
-connection.onmessage = function (e) {
-    var message = JSON.parse(e.data);
-    addRow(message.IP, message.time);
-    console.log('Server: ', e.data);
-};
-connection.onclose = function(){
-    console.log('WebSocket connection closed');
-};
-
-function isServerConnected() {
-    try {
-        state = connection.readyState;
-        updateServerStatus(state);
-        return state == 1;
-     }
-    catch(err) {
-        return false;
-    }
-}
-}
-
 // Stop Watch Functionality
 
 window.onload = main;
+
 var el = {
 	body: document.body,
 	time: document.getElementById('time'),
@@ -76,4 +46,42 @@ function main(e){
 	el.reset.onclick = reset;
 };
 
+// WebSocket Interface With NodeMCU 
+var connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
 
+connection.onopen = function () {
+    connection.send('Connect ' + new Date());
+};
+connection.onerror = function (error) {
+    console.log('WebSocket Error ', error);
+};
+connection.onmessage = function (e) {
+    var message = JSON.parse(e.data);
+    analyzeIncomingMessage(message);
+};
+connection.onclose = function(){
+    console.log('WebSocket connection closed');
+};
+
+function isServerConnected() {
+    try {
+        state = connection.readyState;
+        updateServerStatus(state);
+        return state == 1;
+     }
+    catch(err) {
+        return false;
+    }
+}
+
+/* NodeMCU Sensor Functionality  */
+function analyzeIncomingMessage(message) {
+    if(message.button == "y") {
+        console.log("Button is active");
+        el.start.onclick();
+    }
+    else if(message.button == "n") {
+        console.log("Button is not active");
+        el.stop.onclick();
+    }
+}

@@ -25,7 +25,8 @@ IPAddress clientsConnected[MAX_CLIENTS];
 const char *OTAName = "TimingGate";      // A name and a password for the OTA service
 const char *OTAPassword = "";
 
-#define LED     LED_BUILTIN           // specify the pins with for blinking LED
+#define LED  LED_BUILTIN          // specify the pins with for blinking LED
+const int button = D0;                // specify the pin for the button
 
 const char* mdnsName = "timinggate";     // Domain name for the mDNS responder
 
@@ -33,10 +34,13 @@ int socketNumber;
 int previousTime = 0;
 int ledState = LOW;
 
+int buttonState = LOW;
+
 /*__________________________________________________________SETUP__________________________________________________________*/
 
 void setup() {
   pinMode(LED, OUTPUT);        // the pins with LEDs connected are outputs
+  pinMode(button, INPUT);
 
   Serial.begin(115200);        // Start the Serial communication to send messages to the computer
   delay(10);
@@ -70,25 +74,34 @@ void loop() {
   ArduinoOTA.handle();                        // listen for OTA events
 
   if(enabled) {
-    //clientStatus();
     checkClientCommunication();
   }
+  else if(digitalRead(button) != buttonState ) {
+    buttonState = !buttonState;
+    if(buttonState == LOW) {
+      Serial.println("Button: not active");
+      stopTimer();
+    }
+    else {
+      Serial.println("Button: active");
+      startTimer();
+    }
+  }
+  
 }
 
 /*__________________________________________________________SETUP_FUNCTIONS__________________________________________________________*/
 
-void startWiFi() { // Start a Wi-Fi access point, and try to connect to some given access points. Then wait for either an AP or STA connection
+/*
+  Start a Wi-Fi access point. Wait for the AP connection.
+ */
+void startWiFi() {
   WiFi.softAP(ssid, password);             // Start the access point
   WiFi.softAPConfig(IP,IP,mask);
   Serial.print("Access Point \"");
   Serial.print(ssid);
   Serial.println("\" started\r\n");
 
-  /*Serial.println("Connecting");
-  while (wifiMulti.run() != WL_CONNECTED && WiFi.softAPgetStationNum() < 1) {  // Wait for the Wi-Fi to connect
-    delay(250);
-    Serial.print('.');
-  }*/
   Serial.println("\r\n");
   if(WiFi.softAPgetStationNum() == 0) {      // If the ESP is connected to an AP
     Serial.print("Connected to ");
@@ -293,6 +306,36 @@ void clientStatus() {
   delay(500);
 }
 
+void startTimer() {
+  int capacity = 65; // Use arduinojson.org/assistant to compute the capacity.
+  StaticJsonBuffer<65> jsonBuffer;
+  
+  JsonObject& root = jsonBuffer.createObject();
+  
+  root["IP"] = IPToString(IP);
+  root["button"] = "y";
+
+  String json;
+  root.printTo(json);
+
+  webSocket.sendTXT(socketNumber, json);
+}
+
+void stopTimer() {
+  int capacity = 65; // Use arduinojson.org/assistant to compute the capacity.
+  StaticJsonBuffer<65> jsonBuffer;
+  
+  JsonObject& root = jsonBuffer.createObject();
+  
+  root["IP"] = IPToString(IP);
+  root["button"] = "n";
+
+  String json;
+  root.printTo(json);
+
+  webSocket.sendTXT(socketNumber, json);
+}
+
 void sendClientData(String sensorData, IPAddress clientIP) {
   // Memory pool for JSON object tree.
   //
@@ -361,6 +404,12 @@ void checkClientCommunication() {
     }
   }
 }
+
+/*
+void startTimer() {
+  Serial.println("Sending data");
+  sendClientData("Start Watch", IP);
+}*/
 
 String formatBytes(size_t bytes) { // convert sizes in bytes to KB and MB
   if (bytes < 1024) {
