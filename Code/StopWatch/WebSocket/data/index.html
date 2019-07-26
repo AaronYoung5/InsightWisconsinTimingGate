@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Simple Stopwatch</title>
+		<link href="style.css" rel="stylesheet">
+
+        <link rel="apple-touch-icon" href="/img/apple-touch-icon-180x180.png" sizes="180x180">
+        <link rel="icon" href="/img/runner-icon.png" type="image/png" sizes="144x144">
+        <link rel="icon" href="/img/favicon.ico" type="image/png" sizes="48x48">
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#00878f">
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'>
+	</head>
+
+	<body>
+        <h1>Stop Watch</h1>
+        <div class="box">
+            <p id="time">00:00:00</p>
+        <div style="position:relative; right:0">
+        <div style="position:relative; left: 0;">
+            <button id="start">Start</button>
+            <button id="stop">Stop</button>
+            <button id="lap">Lap</button>
+            <button id= reset>Reset</button>
+        </div></div>
+        </div>
+        <ul id="log">
+            
+        </ul>
+        <button id=clear>Clear Laps</button>
+        <div class="footer">
+            <div id="name">Aaron Young</div>
+            <div id="edit"><a href="edit.html"  id="edit-link">Edit</a></div>
+            <!-- <div id="edit"><button id="edit" class="button" onclick="location.href='edit.html'">Edit</button></div> -->
+        </div>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+        <script src="script.js" type="text/javascript"></script>
+	</body>
+</html>

@@ -60,6 +60,7 @@ connection.onmessage = function (e) {
     analyzeIncomingMessage(message);
 };
 connection.onclose = function(){
+    MCUs.shift();
     console.log('WebSocket connection closed');
 };
 
@@ -75,13 +76,35 @@ function isServerConnected() {
 }
 
 /* NodeMCU Sensor Functionality  */
+let MCUs = [];
+
 function analyzeIncomingMessage(message) {
-    if(message.button == "y") {
-        console.log("Button is active");
-        el.start.onclick();
+    console.log(message);
+    time = message.time;
+    ip = message.ip;
+    action = message.action;
+
+    switch(action) {
+        case "buttonOn":
+            setTime(new Date().getTime()-time, MCUs[0].deltaTime);
+            start.onclick;
+            break;
+        case "buttonOff":
+            stop.onclick;
+            break;
+        case "calibrating":
+            MCUs.push({IP: ip, internalTime: time, deltaTime: new Date().getTime()-time});
+            break;
+        default:
+            console.log("Error while collecting message. Does not recognize action type " + action);
     }
-    else if(message.button == "n") {
-        console.log("Button is not active");
-        el.stop.onclick();
-    }
+}
+
+/* Helper Functions */
+function setTime(newTime, MCUTime) {
+    mil = time % 1000;
+    time = (time - mil) / 1000;
+    sec = s % 60;
+    time = (time - sec) / 60;
+    min = time % 60;
 }

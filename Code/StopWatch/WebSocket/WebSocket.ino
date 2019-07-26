@@ -80,11 +80,11 @@ void loop() {
     buttonState = !buttonState;
     if(buttonState == LOW) {
       Serial.println("Button: not active");
-      stopTimer();
+      startTimer();
     }
     else {
       Serial.println("Button: active");
-      startTimer();
+      //startTimer();
     }
   }
   
@@ -250,6 +250,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
         IPAddress ip = webSocket.remoteIP(num);
         Serial.printf("[%u] Connected from %d.%d.%d.%d url: %s\n", num, ip[0], ip[1], ip[2], ip[3], payload);
         enabled = false;                  // Turn rainbow off when a new connection is established
+        calibrateMCU();
       }
       break;
     case WStype_TEXT:                     // if new text data is received
@@ -306,6 +307,22 @@ void clientStatus() {
   delay(500);
 }
 
+void calibrateMCU() {
+  int capacity = 65; // Use arduinojson.org/assistant to compute the capacity.
+  StaticJsonBuffer<65> jsonBuffer;
+  
+  JsonObject& root = jsonBuffer.createObject();
+  
+  root["IP"] = IPToString(IP);
+  root["action"] = "calibrating";
+  root["time"] = millis();
+
+  String json;
+  root.printTo(json);
+
+  webSocket.sendTXT(socketNumber, json);
+}
+
 void startTimer() {
   int capacity = 65; // Use arduinojson.org/assistant to compute the capacity.
   StaticJsonBuffer<65> jsonBuffer;
@@ -313,7 +330,8 @@ void startTimer() {
   JsonObject& root = jsonBuffer.createObject();
   
   root["IP"] = IPToString(IP);
-  root["button"] = "y";
+  root["action"] = "buttonOn";
+  root["time"] = millis();
 
   String json;
   root.printTo(json);
@@ -328,7 +346,9 @@ void stopTimer() {
   JsonObject& root = jsonBuffer.createObject();
   
   root["IP"] = IPToString(IP);
-  root["button"] = "n";
+  root["action"] = "buttonOn";
+  root["time"] = millis();
+
 
   String json;
   root.printTo(json);

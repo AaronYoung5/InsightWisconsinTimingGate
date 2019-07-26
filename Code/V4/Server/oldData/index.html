@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LED Control</title>
+    <link href='main.css' rel='stylesheet' type='text/css'>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="144x144"  href="/runner-icon.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon.ico">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00878f">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'>
+    <script src="WebSocket.js" type="text/javascript"></script>
+</head>
+
+<body>
+    <center>
+        <header>
+            <h1>LED Control</h1>
+        </header>
+        <div>
+            <p id="enable-button"><button id="enable" class="button" onclick="timingGateStart();">Enable Timing Gate</button></p>
+            <!-- <p style="margin:8px 0px"><button id="enable" class="button" style="background&#45;color:#999" onclick="timingGateStart();">Enable Timing Gate</button></p> -->
+            <p id="edit-button"><button id="edit" class="button" onclick="location.href='edit.html'">Edit</button></p>
+            <!-- <p style="margin:8px 0px"><button id="edit" class="button" style="background&#45;color:#999" href="http://timinggate.local/edit.html">Edit</button></p> -->
+            <table id="table" class="table-fill">
+                <thead>
+                    <tr>
+                        <th class="text-left">IP</th>
+                        <th class="text-left">TIME</th>
+                    </tr>
+                </thead>
+                <tbody class="table-hover">
+                    <tr>
+                        <td class="text-left">0.0.0.0</td>
+                        <td class="text-left">1.80</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="demos">
+            <div class="demo-up">
+                <span class="closed server-status" id="status">Closed</span>
+            </div>
+        </div>
+    </center>
+</body>
+</html>
